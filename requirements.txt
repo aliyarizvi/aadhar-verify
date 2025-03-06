@@ -1,1 +1,13 @@
 ultralytics
+flask
+flask-cors
+pymongo
+dnspython
+easyocr
+openpyxl
+numpy
+opencv-python
+pandas
+python-dotenv
+python-multipart
+pillow
