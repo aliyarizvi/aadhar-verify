@@ -100,7 +100,7 @@ def name_match(input_name, extracted_name):
     6. Single-letter abbreviation
     """
     if not input_name or not extracted_name:
-        return False
+        return False, 0
     
     # Normalize names
     input_name = normalize_text(input_name)
@@ -108,7 +108,7 @@ def name_match(input_name, extracted_name):
     
     # Rule 1: Exact match
     if input_name == extracted_name:
-        return True
+        return True, 100
     
     # Split names into parts
     input_parts = input_name.split()
@@ -130,7 +130,7 @@ def name_match(input_name, extracted_name):
         return True
     
     if check_abbreviation(input_parts, extracted_parts) or check_abbreviation(extracted_parts, input_parts):
-        return True
+        return True, 95
     
     # Rule 3: Ignoring middle names
     def check_without_middle(parts1, parts2):
@@ -142,23 +142,104 @@ def name_match(input_name, extracted_name):
     
     if (len(input_parts) > 2 and check_without_middle(input_parts, extracted_parts)) or \
        (len(extracted_parts) > 2 and check_without_middle(extracted_parts, input_parts)):
-        return True
+        return True, 90
     
     # Rule 4: Matching any part of the name
     if len(input_parts) == 1 and input_parts[0] in extracted_parts:
-        return True
+        return True, 85
     if len(extracted_parts) == 1 and extracted_parts[0] in input_parts:
-        return True
+        return True, 85
     
     # Rule 5: Circular matching (all parts present but in different order)
     if sorted(input_parts) == sorted(extracted_parts):
-        return True
+        return True, 90
     
     # Check if one name is a subset of the other
-    if all(part in extracted_parts for part in input_parts) or all(part in input_parts for part in extracted_parts):
-        return True
+    all_input_in_extracted = all(part in extracted_parts for part in input_parts)
+    all_extracted_in_input = all(part in input_parts for part in extracted_parts)
     
-    return False
+    if all_input_in_extracted:
+        return True, 80
+    if all_extracted_in_input:
+        return True, 80
+    
+    # Calculate partial similarity for non-matches
+    similarity = SequenceMatcher(None, input_name, extracted_name).ratio() * 100
+    if similarity >= 70:
+        return True, similarity
+        
+    return False, similarity
+
+def uid_match(db_uid, extracted_uid):
+    """
+    Calculate UID match score
+    Returns match result (boolean) and score (0-100)
+    """
+    if not db_uid or not extracted_uid:
+        return False, 0
+    
+    # Normalize UIDs by removing spaces
+    db_uid = db_uid.replace(" ", "")
+    extracted_uid = extracted_uid.replace(" ", "")
+    
+    # Exact match
+    if db_uid == extracted_uid:
+        return True, 100
+    
+    # Calculate similarity for partial matches
+    similarity = SequenceMatcher(None, db_uid, extracted_uid).ratio() * 100
+    
+    # High similarity threshold for UIDs
+    if similarity >= 90:
+        return True, similarity
+    
+    return False, similarity
+
+def construct_address_from_excel(row):
+    """Construct address string from the excel row with multiple address fields"""
+    address_parts = []
+    
+    # Add house/flat number if present
+    if pd.notna(row.get("House Flat Number")):
+        address_parts.append(str(row["House Flat Number"]))
+    
+    # Add floor number if present
+    if pd.notna(row.get(" Floor Number")):
+        address_parts.append(str(row[" Floor Number"]))
+    
+    # Add premise/building name if present
+    if pd.notna(row.get("Premise Building Name")):
+        address_parts.append(str(row["Premise Building Name"]))
+    
+    # Add landmark if present
+    if pd.notna(row.get("Landmark")):
+        address_parts.append(str(row["Landmark"]))
+    
+    # Add street/road name if present
+    if pd.notna(row.get("Street Road Name")):
+        address_parts.append(str(row["Street Road Name"]))
+    
+    # Add town if present
+    if pd.notna(row.get("Town")):
+        address_parts.append(str(row["Town"]))
+    
+    # Add city if present
+    if pd.notna(row.get("City")):
+        address_parts.append(str(row["City"]))
+    
+    # Add state if present
+    if pd.notna(row.get("State")):
+        address_parts.append(str(row["State"]))
+    
+    # Add country if present
+    if pd.notna(row.get("Country")):
+        address_parts.append(str(row["Country"]))
+    
+    # Add pincode if present
+    if pd.notna(row.get("PINCODE")):
+        address_parts.append(str(row["PINCODE"]))
+    
+    return ", ".join(address_parts)
 
 def extract_pincode(address):
     """Extract 6-digit pincode from an address string"""
@@ -191,12 +272,6 @@ def normalize_address(address):
     
     return ' '.join(filtered_words)
 
-def similarity_ratio(str1, str2):
-    """Calculate string similarity ratio using SequenceMatcher"""
-    if not str1 or not str2:
-        return 0
-    return SequenceMatcher(None, str1, str2).ratio() * 100
-
 def address_match(input_address, extracted_address):
     """
     Implement the address matching logic:
@@ -206,7 +281,7 @@ def address_match(input_address, extracted_address):
     4. Final address match score
     """
     if not input_address or not extracted_address:
-        return False
+        return False, 0
     
     # Extract pincodes
     input_pincode = extract_pincode(input_address)
@@ -220,7 +295,7 @@ def address_match(input_address, extracted_address):
     norm_extracted = normalize_address(extracted_address)
     
     # Calculate overall string similarity
-    similarity_score = similarity_ratio(norm_input, norm_extracted)
+    similarity_score = SequenceMatcher(None, norm_input, norm_extracted).ratio() * 100
     
     # Split addresses into parts for field-specific matching
     input_parts = norm_input.split()
@@ -234,7 +309,7 @@ def address_match(input_address, extracted_address):
         matches = sum(1 for part in significant_parts if part in extracted_parts)
         parts_score = (matches / len(significant_parts)) * 100
     
-    # Calculate final address score
+    # Calculate final address score with weighting
     if pincode_score > 0:
         # If pincode matches, give it high weight
         final_score = (0.4 * pincode_score) + (0.4 * similarity_score) + (0.2 * parts_score)
@@ -242,58 +317,94 @@ def address_match(input_address, extracted_address):
         # If no pincode or pincode mismatch, rely more on content matching
         final_score = (0.6 * similarity_score) + (0.4 * parts_score)
     
-    # Return True if score is above threshold
-    return final_score >= 70
+    # Return match result and score
+    return final_score >= 70, final_score
 
 def calculate_match_score(extracted_data, excel_file):
+    """
+    Calculate match scores for all fields and return a dictionary of scores
+    """
     try:
+        # Initialize default scores
+        match_scores = {
+            "name_score": 0,
+            "address_score": 0,
+            "uid_score": 0,
+            "overall_score": 0
+        }
+        
         if not all(key in extracted_data for key in ["name", "uid", "address"]):
             print("Missing required fields in extracted data")
-            return 0
+            return match_scores
             
         if not os.path.exists(excel_file):
             print(f"Excel file not found: {excel_file}")
-            return 0
+            return match_scores
             
         df = pd.read_excel(excel_file)
         
-        required_columns = ["UID", "Name", "Address"]
+        # Check for required columns (based on your actual Excel structure)
+        required_columns = ["Name", "UID"]
         if not all(col in df.columns for col in required_columns):
             print(f"Excel file is missing required columns. Available columns: {df.columns.tolist()}")
-            return 0
+            return match_scores
             
         if not extracted_data["uid"]:
             print("Extracted UID is empty")
-            return 0
+            return match_scores
         
         # Normalize UID by removing spaces for comparison
         extracted_uid = extracted_data["uid"].replace(" ", "")
             
+        best_match_scores = match_scores.copy()
+        best_match_found = False
+            
         for index, row in df.iterrows():
             db_uid = str(row["UID"]).replace(" ", "")
             
-            # Check if UIDs match
-            if db_uid == extracted_uid:
-                # Apply the improved name and address matching logic
-                name_matched = name_match(row["Name"], extracted_data["name"])
-                address_matched = address_match(row["Address"], extracted_data["address"])
+            # Calculate UID match score
+            uid_matched, uid_score = uid_match(db_uid, extracted_uid)
+            
+            # If UID doesn't match at all, skip to next record
+            if uid_score < 80: 
+                continue
                 
-                # Calculate scores based on matches
-                name_score = 100 if name_matched else 0
-                address_score = 100 if address_matched else 0
-                
-                # Combined match score
-                overall_score = (name_score + address_score) / 2
-                
-                print(f"Match results for UID {extracted_uid}:")
-                print(f"  Name match: {name_matched} ({name_score})")
-                print(f"  Address match: {address_matched} ({address_score})")
-                print(f"  Overall score: {overall_score}")
-                
-                return overall_score
-                
-        print(f"No matching UID found in excel: {extracted_uid}")
-        return 0
+            # Construct full address from multiple fields in Excel
+            db_address = construct_address_from_excel(row)
+            
+            # Apply name and address matching logic
+            name_matched, name_score = name_match(row["Name"], extracted_data["name"])
+            addr_matched, addr_score = address_match(db_address, extracted_data["address"])
+        
+            # Give higher weight to UID and name matches since they're more reliable
+            overall_score = (0.4 * uid_score) + (0.4 * name_score) + (0.2 * addr_score)
+            
+            # Log the match details
+            print(f"Match results for UID {extracted_uid}:")
+            print(f"  DB UID: '{db_uid}' vs Extracted: '{extracted_uid}' (Score: {uid_score:.1f})")
+            print(f"  DB Name: '{row['Name']}' vs Extracted: '{extracted_data['name']}' (Score: {name_score:.1f})")
+            print(f"  DB Address: '{db_address}'")
+            print(f"  Extracted Address: '{extracted_data['address']}' (Score: {addr_score:.1f})")
+            print(f"  Overall score: {overall_score:.1f}")
+            
+            # Update best match if this is better
+            if overall_score > best_match_scores["overall_score"]:
+                best_match_scores = {
+                    "name_score": round(name_score, 1),
+                    "address_score": round(addr_score, 1),
+                    "uid_score": round(uid_score, 1),
+                    "overall_score": round(overall_score, 1)
+                }
+                best_match_found = True
+        
+        if best_match_found:
+            return best_match_scores
+        else:
+            print(f"No matching UID found in excel: {extracted_uid}")
+            return match_scores
+            
     except Exception as e:
         print(f"Error in calculate_match_score: {str(e)}")
-        return 0
+        import traceback
+        traceback.print_exc()
+        return match_scores

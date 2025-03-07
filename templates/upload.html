@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Upload & Verify - Aadhar Fraud Detection System</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Aadhar Fraud Detection System" name="keywords">
+    <meta content="Upload and verify Aadhar cards for fraud detection" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3F4259;
+            --secondary: #6C7293;
+            --light: #F5F6FA;
+            --dark: #2A2C3F;
+            --accent: #8E92BC;
+            --text: #444444;
+            --text-light: #777777;
+            --border: #E4E6EF;
+            --bg-light: #F8F9FD;
+            --bg-dark: #2A2C3F;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            display: none;
+            right: 45px;
+            bottom: 45px;
+            z-index: 99;
+        }
+        
+        h1, h2, h3, .fw-bold {
+            font-weight: 700 !important;
+            color: var(--dark);
+        }
+        
+        h4, h5, h6, .fw-medium {
+            font-weight: 500 !important;
+            /* color: var(--dark); */
+        }
+        
+        .btn {
+            font-weight: 500;
+            transition: .5s;
+            border-radius: 5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark);
+            border-color: var(--dark);
+        }
+        
+        .hero-header {
+            background-color: var(--dark);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-light .navbar-nav .nav-link {
+            position: relative;
+            margin-left: 25px;
+            padding: 25px 0;
+            color: var(--dark) !important;
+            font-weight: 500;
+            outline: none;
+            transition: .5s;
+        }
+        
+        .navbar-light .navbar-brand h1 {
+            color: var(--primary);
+        }
+        
+        .navbar-light .navbar-nav .nav-link:hover,
+        .navbar-light .navbar-nav .nav-link.active {
+            color: var(--primary) !important;
+        }
+        
+        .navbar-light .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 15px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .navbar-light .navbar-nav .nav-link:hover::after,
+        .navbar-light .navbar-nav .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .upload-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .upload-box {
+            border: 2px dashed var(--accent);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: var(--light);
+        }
+        
+        .upload-box:hover {
+            background-color: var(--accent);
+            background-color: rgba(142, 146, 188, 0.1);
+        }
+        
+        .result-card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .result-card .card-header {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            border: none;
+            padding: 15px 20px;
+        }
+        
+        .progress-card {
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background-color: #10B981;
+        }
+        
+        .badge-danger {
+            background-color: #EF4444;
+        }
+        
+        .badge-warning {
+            background-color: #F59E0B;
+        }
+        
+        .footer, .container-fluid.bg-primary {
+            background-color: var(--dark) !important;
+            padding-top: 50px;
+        }
+        
+        .footer .btn.btn-social {
+            margin-right: 5px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 38px;
+            transition: .3s;
+        }
+        
+        .footer .btn.btn-social:hover {
+            color: var(--primary);
+            background: var(--light);
+        }
+        
+        .footer .btn.btn-link {
+            display: block;
+            margin-bottom: 10px;
+            padding: 0;
+            text-align: left;
+            color: var(--light);
+            font-weight: normal;
+            transition: .3s;
+        }
+        
+        .footer .btn.btn-link:hover {
+            color: var(--accent);
+        }
+        
+        .footer .copyright {
+            padding: 25px 0;
+            font-size: 14px;
+            border-top: 1px solid rgba(256, 256, 256, .1);
+        }
+        
+        .section-title h6 {
+            position: relative;
+            display: inline-block;
+            text-transform: uppercase;
+            padding-right: 15px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        
+        .section-title h6::before {
+            /* position: absolute;
+            content: "";
+            width: 10px;
+            height: 10px;
+            top: 5px;
+            right: 0;
+            background: var(--primary);
+            border-radius: 2px; */
+            display: none;
+        }
+        
+        .section-title h2 {
+            margin-top: 10px;
+            margin-bottom: 25px;
+            font-size: 32px;
+        }
+        .border-bottom{
+            color: var(--light);
+        }
+
+        .footer-menu a {
+            color: var(--light);
+            margin-right: 15px;
+            transition: .3s;
+        }
+
+        #verifyBtn {
+        background-color: var(--primary) !important;
+        color: white !important;
+        border: none;
+        }
+
+        #verifyBtn:hover {
+        background-color: var(--secondary) !important;
+        color: var(--dark) !important;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Navbar & Hero Start -->
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="index.html" class="navbar-brand p-0">
+                    <h1 class="m-0"><i class="fa fa-shield-alt me-2"></i>Aadhar<span class="fs-5">Verify</span></h1>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Home</a>
+                        <a href="{{ url_for('upload_page') }}" class="nav-item nav-link">Upload & Verify</a>
+                        <a href="{{ url_for('analytics_page') }}" class="nav-item nav-link">Analytics</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-xxl py-5 hero-header mb-5">
+                <div class="container my-5 py-5 px-lg-5 position-relative">
+                    <div class="row g-5 py-5">
+                        <div class="col-12 text-center">
+                            <h1 class="text-white animated zoomIn">Upload & Verify</h1>
+                            <hr class="bg-light mx-auto mt-0" style="width: 90px;">
+                            <!-- <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-center">
+                                    <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
+                                    <li class="breadcrumb-item text-white active" aria-current="page">Upload & Verify</li>
+                                </ol>
+                            </nav> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+
+        <!-- Upload Section Start -->
+        <div class="container-xxl py-5">
+            <div class="container px-lg-5">
+                <div class="section-title position-relative text-center mb-5 pb-2">
+                    <h6 class="position-relative d-inline ps-4">Verification</h6>
+                    <h2 class="mt-2">Upload Aadhar Cards for Verification</h2>
+                </div>
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="upload-section p-5">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <h5>Upload Aadhar ZIP File</h5>
+                                    <div class="upload-box" id="zipUpload">
+                                        <i class="fas fa-file-archive fa-3x mb-3"></i>
+                                        <h6>Drag & Drop ZIP file</h6>
+                                        <p class="small text-muted">or click to browse</p>
+                                        <input type="file" id="zipFileInput" accept=".zip" class="d-none">
+                                    </div>
+                                    <p class="mt-2 small text-muted" id="zipFileName">No file selected</p>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <h5>Upload Excel Sheet</h5>
+                                    <div class="upload-box" id="excelUpload">
+                                        <i class="fas fa-file-excel fa-3x mb-3"></i>
+                                        <h6>Drag & Drop XLSX file</h6>
+                                        <p class="small text-muted">or click to browse</p>
+                                        <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="d-none">
+                                    </div>
+                                    <p class="mt-2 small text-muted" id="excelFileName">No file selected</p>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-primary py-3 px-5 rounded-pill" id="verifyBtn" disabled>Start Verification</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Verification Process Section -->
+                <div class="row mb-5" id="verificationProgress" style="display: none;">
+                    <div class="col-lg-8 mx-auto">
+                        <div class="progress-card">
+                            <h4 class="mb-4">Verification in Progress</h4>
+                            <div class="progress mb-4">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%" id="progressBar"></div>
+                            </div>
+                            <div class="steps mt-4">
+                                <div class="step">
+                                    <div class="step-number">1</div>
+                                    <div class="step-text">Extracting Files</div>
+                                    <div class="ms-auto" id="step1Status"><span class="badge bg-secondary">Pending</span></div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-text">Processing Documents</div>
+                                    <div class="ms-auto" id="step2Status"><span class="badge bg-secondary">Pending</span></div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-text">AI Analysis</div>
+                                    <div class="ms-auto" id="step3Status"><span class="badge bg-secondary">Pending</span></div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-text">Generating Report</div>
+                                    <div class="ms-auto" id="step4Status"><span class="badge bg-secondary">Pending</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="row g-4" id="resultsSection" style="display: none;">
+                    <div class="col-12">
+                        <h4 class="mb-4">Verification Results</h4>
+                    </div>
+                    <!-- Summary Card -->
+                    <div class="col-lg-4">
+                        <div class="result-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Summary</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Total Documents:</span>
+                                    <strong id="totalCards">0</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Verified:</span>
+                                    <strong class="text-success" id="verifiedCards">0</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Suspicious:</span>
+                                    <strong class="text-warning" id="suspiciousCards">0</strong>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Fraudulent:</span>
+                                    <strong class="text-danger" id="fraudulentCards">0</strong>
+                                </div>
+                                <hr>
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-primary" id="downloadReport">Download Full Report</a>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <div class="btn btn-primary">
+                                        <a href="{{ url_for('analytics_page') }}" class="btn btn-primary">View Analytics</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Results Table -->
+                    <div class="col-lg-8">
+                        <div class="result-card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Detailed Results</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Aadhar Number</th>
+                                                <th>Name</th>
+                                                <th>Status</th>
+                                                <th>Confidence</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="resultsTable">
+                                            <tr>
+                                                <td colspan="4" class="text-center">No data available</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <nav aria-label="Page navigation" class="mt-4">
+                                    <ul class="pagination justify-content-center" id="pagination">
+                                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Section End  -->
+
+        <!-- Footer Start -->
+        <div class="container-fluid footer text-light mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5 px-lg-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-4">
+                        <h5 class="text-white mb-4">Get In Touch</h5>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New Delhi, India</p>
+                        <p><i class="fa fa-phone-alt me-3"></i>+91 98765 43210</p>
+                        <p><i class="fa fa-envelope me-3"></i>info@aadharverify.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <h5 class="text-white mb-4">Quick Links</h5>
+                        <a class="btn btn-link" href="{{ url_for('index') }}">Home</a>
+                        <a class="btn btn-link" href="{{ url_for('upload_page') }}">Upload & Verify</a>
+                        <a class="btn btn-link" href="{{ url_for('analytics_page') }}">Analytics</a>
+                        <a class="btn btn-link" href="">Privacy Policy</a>
+                        <a class="btn btn-link" href="">Terms & Condition</a>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <h5 class="text-white mb-4">Newsletter</h5>
+                        <p>Stay updated with the latest developments in fraud detection technology</p>
+                        <div class="position-relative w-100 mt-3">
+                            <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" placeholder="Your Email" style="height: 48px;">
+                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i class="fa fa-paper-plane fs-4"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container px-lg-5">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#">AadharVerify</a>, All Right Reserved. 
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="">Home</a>
+                                <a href="">Help</a>
+                                <a href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top pt-2"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+</body>
+
+</html>

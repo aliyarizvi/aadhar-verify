@@ -1,5 +1,5 @@
 import zipfile
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from bson.json_util import dumps
 import os
 import shutil
@@ -8,11 +8,29 @@ from utils import is_aadhar_card
 from utils import extract_text
 from utils import calculate_match_score
 import uuid
+import ntpath
 
 app = Flask(__name__)
 
+# Set up static folder structure
 UPLOAD_FOLDER = "uploads"
+STATIC_FOLDER = "static"
+TEMPLATE_FOLDER = "templates"
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(STATIC_FOLDER, exist_ok=True)
+os.makedirs(TEMPLATE_FOLDER, exist_ok=True)
+
+# Copy HTML files to templates folder if they don't exist yet
+def setup_template_files():
+    html_files = ["index.html", "upload.html", "analytics.html"]
+    for file in html_files:
+        if os.path.exists(file) and not os.path.exists(os.path.join(TEMPLATE_FOLDER, file)):
+            shutil.copy(file, TEMPLATE_FOLDER)
+            print(f"Copied {file} to templates folder")
+
+# Call setup on startup
+setup_template_files()
 
 def clean_uploads_folder():
     try:
@@ -30,10 +48,32 @@ def clean_uploads_folder():
     except Exception as e:
         print(f"Error cleaning uploads folder: {str(e)}")
 
-@app.route("/upload", methods=["POST"])
+def get_filename(file_path):
+    """Extract filename from path"""
+    return ntpath.basename(file_path)
+
+# Routes for serving HTML pages
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/upload.html")
+def upload_page():
+    return render_template("upload.html")
+
+@app.route("/analytics.html")
+def analytics_page():
+    return render_template("analytics.html")
+
+# API Endpoints
+@app.route("/api/upload", methods=["POST"])
 def upload_files():
     if "zip_file" not in request.files or "excel_file" not in request.files:
         return jsonify({"error": "ZIP file and Excel file are required"}), 400
+    
+    # Clear the database before processing a new upload
+    users_collection.delete_many({})
+    print("Database cleared before new upload")    
 
     clean_uploads_folder()
     
@@ -57,10 +97,11 @@ def upload_files():
     return jsonify({
         "message": "Files uploaded successfully", 
         "zip_path": zip_path, 
-        "excel_path": excel_path
+        "excel_path": excel_path,
+        "batch_id": batch_id
     })
 
-@app.route("/process", methods=["POST"])
+@app.route("/api/process", methods=["POST"])
 def process_data():
     try:
         data = request.json
@@ -80,27 +121,51 @@ def process_data():
 
         results = []
         bulk_insert = []
+        non_aadhaar_files = []
 
         for image in extracted_images:
+            filename = get_filename(image)
+            
             if is_aadhar_card(image):
+                # Process Aadhaar card
                 cropped_data = extract_text(image)
                 
-                if not all(key in cropped_data for key in ["name", "uid", "address"]):
-                    print(f"Warning: Missing fields in cropped data for {image}")
-                    continue
+                # Calculate match scores (name, address, uid, overall)
+                match_scores = calculate_match_score(cropped_data, excel_path)
                 
-                score = calculate_match_score(cropped_data, excel_path)
-
                 user_record = {
                     "name": cropped_data.get("name", ""),
                     "uid": cropped_data.get("uid", ""),
                     "address": cropped_data.get("address", ""),
-                    "match_score": score,
+                    "filename": filename,
+                    "is_aadhaar": True,
+                    "name_score": match_scores.get("name_score", 0),
+                    "address_score": match_scores.get("address_score", 0),
+                    "uid_score": match_scores.get("uid_score", 0),
+                    "overall_score": match_scores.get("overall_score", 0),
                     "batch_id": batch_id,
                 }
 
                 bulk_insert.append(user_record)
                 results.append({**user_record})
+            else:
+                # Handle non-Aadhaar files
+                non_aadhaar_record = {
+                    "name": "NA",
+                    "uid": "NA",
+                    "address": "NA",
+                    "filename": filename,
+                    "is_aadhaar": False,
+                    "name_score": 0,
+                    "address_score": 0,
+                    "uid_score": 0,
+                    "overall_score": 0,
+                    "batch_id": batch_id,
+                }
+                
+                bulk_insert.append(non_aadhaar_record)
+                results.append({**non_aadhaar_record})
+                non_aadhaar_files.append(filename)
 
         if bulk_insert:
             inserted_ids = users_collection.insert_many(bulk_insert).inserted_ids
@@ -113,7 +178,10 @@ def process_data():
         return jsonify({
             "message": "Processing complete", 
             "results": results,
-            "count": len(results)
+            "aadhaar_count": len(results) - len(non_aadhaar_files),
+            "non_aadhaar_count": len(non_aadhaar_files),
+            "non_aadhaar_files": non_aadhaar_files,
+            "total_count": len(results)
         })
 
     except Exception as e:
@@ -129,7 +197,7 @@ def extract_zip(zip_path, output_folder):
                 extracted_files.append(os.path.join(output_folder, file_name))
     return extracted_files
 
-@app.route("/results", methods=["GET"])
+@app.route("/api/results", methods=["GET"])
 def get_results():
     try:
         last_batch_path = os.path.join(UPLOAD_FOLDER, "last_batch.txt")
@@ -137,31 +205,69 @@ def get_results():
             with open(last_batch_path, "r") as f:
                 batch_id = f.read().strip()
                 
-            users = list(users_collection.find({"batch_id": batch_id}, {"_id": 0}))
-            return jsonify({"results": users, "batch_id": batch_id})
+            users = list(users_collection.find({"batch_id": batch_id}))
+            
+            # Convert ObjectId to string for JSON serialization
+            for user in users:
+                if "_id" in user:
+                    user["_id"] = str(user["_id"])
+            
+            # Count statistics
+            aadhaar_count = sum(1 for user in users if user.get("is_aadhaar", False))
+            non_aadhaar_count = sum(1 for user in users if not user.get("is_aadhaar", True))
+            non_aadhaar_files = [user.get("filename") for user in users if not user.get("is_aadhaar", True)]
+            
+            return jsonify({
+                "results": users, 
+                "batch_id": batch_id,
+                "aadhaar_count": aadhaar_count,
+                "non_aadhaar_count": non_aadhaar_count,
+                "non_aadhaar_files": non_aadhaar_files,
+                "total_count": len(users)
+            })
         else:
             return jsonify({"error": "No recent batch found"}), 404
     except Exception as e:
         return jsonify({"error": f"Error retrieving results: {str(e)}"}), 500
 
-@app.route("/results/<batch_id>", methods=["GET"])
+@app.route("/api/results/<batch_id>", methods=["GET"])
 def get_results_by_batch(batch_id):
-    users = list(users_collection.find({"batch_id": batch_id}, {"_id": 0}))
-    return jsonify({"results": users, "batch_id": batch_id})
+    users = list(users_collection.find({"batch_id": batch_id}))
+    
+    # Convert ObjectId to string for JSON serialization
+    for user in users:
+        if "_id" in user:
+            user["_id"] = str(user["_id"])
+    
+    # Count statistics
+    aadhaar_count = sum(1 for user in users if user.get("is_aadhaar", False))
+    non_aadhaar_count = sum(1 for user in users if not user.get("is_aadhaar", True))
+    non_aadhaar_files = [user.get("filename") for user in users if not user.get("is_aadhaar", True)]
+    
+    return jsonify({
+        "results": users, 
+        "batch_id": batch_id,
+        "aadhaar_count": aadhaar_count,
+        "non_aadhaar_count": non_aadhaar_count,
+        "non_aadhaar_files": non_aadhaar_files,
+        "total_count": len(users)
+    })
 
-@app.route("/batches", methods=["GET"])
+@app.route("/api/batches", methods=["GET"])
 def get_batches():
     batches = users_collection.distinct("batch_id")
     return jsonify(batches)
 
-@app.route("/all-results", methods=["GET"])
+@app.route("/api/all-results", methods=["GET"])
 def get_all_results():
-    users = list(users_collection.find({}, {"_id": 0}))
+    users = list(users_collection.find({}))
+    
+    # Convert ObjectId to string for JSON serialization
+    for user in users:
+        if "_id" in user:
+            user["_id"] = str(user["_id"])
+            
     return jsonify(users)
-
-@app.route("/")
-def home():
-    return "Welcome to Aadhaar Fraud Detection API!"
 
 if __name__ == "__main__":
     app.run(debug=True)

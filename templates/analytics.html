@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Analytics - Aadhar Fraud Detection System</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Aadhar Fraud Detection System" name="keywords">
+    <meta content="Analytics dashboard for Aadhar card verification" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Bootstrap Stylesheet -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Same style as other pages -->
+    <style>
+        :root {
+            --primary: #3F4259;
+            --secondary: #6C7293;
+            --light: #F5F6FA;
+            --dark: #2A2C3F;
+            --accent: #8E92BC;
+            --text: #444444;
+            --text-light: #777777;
+            --border: #E4E6EF;
+            --bg-light: #F8F9FD;
+            --bg-dark: #2A2C3F;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+        }
+        
+        .back-to-top {
+            position: fixed;
+            display: none;
+            right: 45px;
+            bottom: 45px;
+            z-index: 99;
+        }
+        
+        h1, h2, h3, .fw-bold {
+            font-weight: 700 !important;
+            color: var(--dark);
+        }
+        
+        h4, h5, h6, .fw-medium {
+            font-weight: 500 !important;
+            /* color: var(--dark); */
+        }
+        
+        .btn {
+            font-weight: 500;
+            transition: .5s;
+            border-radius: 5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark);
+            border-color: var(--dark);
+        }
+        
+        .hero-header {
+            background-color: var(--dark);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .hero-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-light .navbar-nav .nav-link {
+            position: relative;
+            margin-left: 25px;
+            padding: 25px 0;
+            color: var(--dark) !important;
+            font-weight: 500;
+            outline: none;
+            transition: .5s;
+        }
+        
+        .navbar-light .navbar-brand h1 {
+            color: var(--primary);
+        }
+        
+        .navbar-light .navbar-nav .nav-link:hover,
+        .navbar-light .navbar-nav .nav-link.active {
+            color: var(--primary) !important;
+        }
+        
+        .navbar-light .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 15px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .navbar-light .navbar-nav .nav-link:hover::after,
+        .navbar-light .navbar-nav .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .stat-card {
+            border-radius: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+        
+        .stat-card .stat-title {
+            color: var(--text-light);
+            margin-bottom: 0;
+        }
+        
+        .stat-card.verified {
+            border-left: 5px solid #10B981;
+        }
+        
+        .stat-card.suspicious {
+            border-left: 5px solid #F59E0B;
+        }
+        
+        .stat-card.fraudulent {
+            border-left: 5px solid #EF4444;
+        }
+        
+        .stat-card.non-aadhaar {
+            border-left: 5px solid #6B7280;
+        }
+        
+        .chart-card {
+            border-radius: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .table-card {
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .table-card .card-header {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+            border: none;
+            padding: 15px 20px;
+        }
+        
+        .badge-success {
+            background-color: #10B981;
+        }
+        
+        .badge-danger {
+            background-color: #EF4444;
+        }
+        
+        .badge-warning {
+            background-color: #F59E0B;
+        }
+        
+        .footer, .container-fluid.bg-primary {
+            background-color: var(--dark) !important;
+            padding-top: 50px;
+        }
+        
+        .footer .btn.btn-social {
+            margin-right: 5px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 38px;
+            transition: .3s;
+        }
+        
+        .footer .btn.btn-social:hover {
+            color: var(--primary);
+            background: var(--light);
+        }
+        
+        .footer .btn.btn-link {
+            display: block;
+            margin-bottom: 10px;
+            padding: 0;
+            text-align: left;
+            color: var(--light);
+            font-weight: normal;
+            transition: .3s;
+        }
+        
+        .footer .btn.btn-link:hover {
+            color: var(--accent);
+        }
+        
+        .footer .copyright {
+            padding: 25px 0;
+            font-size: 14px;
+            border-top: 1px solid rgba(256, 256, 256, .1);
+        }
+        
+        .section-title h6 {
+            position: relative;
+            display: inline-block;
+            text-transform: uppercase;
+            padding-right: 15px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        
+        .section-title h2 {
+            margin-top: 10px;
+            margin-bottom: 25px;
+            font-size: 32px;
+        }
+        
+        .border-bottom{
+            color: var(--light);
+        }
+
+        .footer-menu a {
+            color: var(--light);
+            margin-right: 15px;
+            transition: .3s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Navbar & Hero Start -->
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="index.html" class="navbar-brand p-0">
+                    <h1 class="m-0"><i class="fa fa-shield-alt me-2"></i>Aadhar<span class="fs-5">Verify</span></h1>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link">Home</a>
+                        <a href="{{ url_for('upload_page') }}" class="nav-item nav-link">Upload & Verify</a>
+                        <a href="{{ url_for('analytics_page') }}" class="nav-item nav-link">Analytics</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-xxl py-5 hero-header mb-5">
+                <div class="container my-5 py-5 px-lg-5 position-relative">
+                    <div class="row g-5 py-5">
+                        <div class="col-12 text-center">
+                            <h1 class="text-white animated zoomIn">Analytics Dashboard</h1>
+                            <hr class="bg-light mx-auto mt-0" style="width: 90px;">
+                            <!-- <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb justify-content-center">
+                                    <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
+                                    <li class="breadcrumb-item text-white active" aria-current="page">Analytics</li>
+                                </ol>
+                            </nav> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+
+        <!-- Analytics Dashboard Start -->
+        <div class="container-xxl py-5">
+            <div class="container px-lg-5">
+                <div class="section-title position-relative text-center mb-5 pb-2">
+                    <h6 class="position-relative d-inline ps-4">Dashboard</h6>
+                    <h2 class="mt-2">Verification Analytics</h2>
+                </div>
+                
+                <!-- Batch Selection -->
+                <div class="row mb-4">
+                    <div class="col-lg-6 mx-auto">
+                        <div class="form-group">
+                            <label for="batchSelect" class="form-label">Select Verification Batch:</label>
+                            <select class="form-select" id="batchSelect">
+                                <option value="">Loading batches...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No Batch Alert -->
+                <div class="row mb-4" id="noBatchAlert" style="display: none;">
+                    <div class="col-12">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i> No verification batches found. Please upload and verify Aadhar cards first.
+                            <div class="mt-3">
+                                <a href="upload.html" class="btn btn-primary">Go to Upload & Verify</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Results Container -->
+                <div id="resultsContainer">
+                    <!-- Statistics Cards -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card verified">
+                                <p class="stat-title">Verified</p>
+                                <h3 class="stat-value text-success" id="verifiedCount">0</h3>
+                                <p class="small text-muted" id="verifiedPercent">(0%)</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card suspicious">
+                                <p class="stat-title">Suspicious</p>
+                                <h3 class="stat-value text-warning" id="suspiciousCount">0</h3>
+                                <p class="small text-muted" id="suspiciousPercent">(0%)</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card fraudulent">
+                                <p class="stat-title">Fraudulent</p>
+                                <h3 class="stat-value text-danger" id="fraudulentCount">0</h3>
+                                <p class="small text-muted" id="fraudulentPercent">(0%)</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="stat-card non-aadhaar">
+                                <p class="stat-title">Total Documents</p>
+                                <h3 class="stat-value" id="totalCardsCount">0</h3>
+                                <p class="small text-muted">Non-Aadhar: <span id="nonAadhaarCount">0</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts Row -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-6">
+                            <div class="chart-card h-100">
+                                <h5 class="mb-4">Verification Status</h5>
+                                <canvas id="statusChart" height="250"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="chart-card h-100">
+                                <h5 class="mb-4">Score Distribution</h5>
+                                <canvas id="scoreDistributionChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Results Table -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12">
+                            <div class="table-card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">Detailed Results</h5>
+                                    <button class="btn btn-sm btn-light" id="exportResults">
+                                        <i class="fas fa-download me-2"></i>Export
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sr.No</th>
+                                                    <th>Aadhar Number</th>
+                                                    <th>Name</th>
+                                                    <th>Status</th>
+                                                    <th>Score</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="detailedResultsTable">
+                                                <tr>
+                                                    <td colspan="6" class="text-center">Loading data...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Non-Aadhar Files Table -->
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="table-card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Non-Aadhar Files</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sr.No</th>
+                                                    <th>Filename</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="nonAadharFilesTable">
+                                                <tr>
+                                                    <td colspan="2" class="text-center">Loading data...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="chart-card h-100">
+                                <h5 class="mb-4">Document Type Distribution</h5>
+                                <canvas id="documentTypeChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Analytics Dashboard End -->
+
+        <!-- Footer Start -->
+        <div class="container-fluid footer text-light mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5 px-lg-5">
+                <div class="row g-5">
+                    <div class="col-md-6 col-lg-4">
+                        <h5 class="text-white mb-4">Get In Touch</h5>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New Delhi, India</p>
+                        <p><i class="fa fa-phone-alt me-3"></i>+91 98765 43210</p>
+                        <p><i class="fa fa-envelope me-3"></i>info@aadharverify.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <h5 class="text-white mb-4">Quick Links</h5>
+                        <a class="btn btn-link" href="{{ url_for('index') }}">Home</a>
+                        <a class="btn btn-link" href="{{ url_for('upload_page') }}">Upload & Verify</a>
+                        <a class="btn btn-link" href="{{ url_for('analytics_page') }}">Analytics</a>
+                        <a class="btn btn-link" href="">Privacy Policy</a>
+                        <a class="btn btn-link" href="">Terms & Condition</a>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <h5 class="text-white mb-4">Newsletter</h5>
+                        <p>Stay updated with the latest developments in fraud detection technology</p>
+                        <div class="position-relative w-100 mt-3">
+                            <input class="form-control border-0 rounded-pill w-100 ps-4 pe-5" type="text" placeholder="Your Email" style="height: 48px;">
+                            <button type="button" class="btn shadow-none position-absolute top-0 end-0 mt-1 me-2"><i class="fa fa-paper-plane fs-4"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container px-lg-5">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#">AadharVerify</a>, All Right Reserved. 
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="">Home</a>
+                                <a href="">Help</a>
+                                <a href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top pt-2"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+
+</body>
+</html>
