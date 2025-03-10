@@ -13,7 +13,7 @@ import ntpath
 app = Flask(__name__)
 
 # Set up static folder structure
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = "/tmp/uploads"
 STATIC_FOLDER = "static"
 TEMPLATE_FOLDER = "templates"
 
