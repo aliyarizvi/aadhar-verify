@@ -92,6 +92,8 @@
             background-repeat: no-repeat;
             background-size: cover;
             position: relative;
+            padding-top: 3rem;
+            /* padding-bottom: 1rem;  */
         }
         
         .hero-header::before {
@@ -288,7 +290,7 @@
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                <a href="index.html" class="navbar-brand p-0">
+                <a href="{{ url_for('index') }}" class="navbar-brand p-0">
                     <h1 class="m-0"><i class="fa fa-shield-alt me-2"></i>Aadhar<span class="fs-5">Verify</span></h1>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -296,19 +298,19 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="{{ url_for('index') }}" class="nav-item nav-link active">Home</a>
                         <a href="upload.html" class="nav-item nav-link">Upload & Verify</a>
                         <a href="analytics.html" class="nav-item nav-link">Analytics</a>
                     </div>
                 </div>
             </nav>
 
-            <div class="container-xxl py-5 hero-header mb-5">
+            <div class="container-xxl hero-header mb-5">
                 <div class="container my-5 py-5 px-lg-5 position-relative">
                     <div class="row g-5 py-5">
                         <div class="col-lg-6 text-center text-lg-start">
                             <h1 class="text-white mb-4 animated zoomIn">AI-Powered Aadhar Card Fraud Detection System</h1>
-                            <p class="text-white pb-3 animated zoomIn">Leverage advanced AI algorithms to detect fraudulent Aadhar cards with high accuracy. Our system uses machine learning techniques to identify anomalies and verify authenticity.</p>
+                            <p class="text-white pb-3 animated zoomIn"> Say goodbye to Aadhar fraud! Our AI-powered system carefully scans, analyzes, and verifies Aadhar cards with high accuracy, ensuring that only genuine identities are authenticated while keeping your information secure.</p>
                             <a href="upload.html" class="btn btn-light py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft">Get Started</a>
                             <a href="#features" class="btn btn-outline-light py-sm-3 px-sm-5 rounded-pill animated slideInRight">Learn More</a>
                         </div>
@@ -373,15 +375,15 @@
                             <h6 class="position-relative">About Our System</h6>
                             <h2 class="mt-2">How Our AI Detection Works</h2>
                         </div>
-                        <p class="mb-4">Our AI-powered Aadhar card fraud detection system uses advanced computer vision and machine learning algorithms to analyze various aspects of Aadhar cards, including:</p>
+                        <p class="mb-4">Our AI-powered Aadhar fraud detection system follows a structured verification process to ensure authenticity and accuracy and performs the following checks:</p>
                         <div class="row g-3">
                             <div class="col-sm-6">
-                                <h6 class="mb-3"><i class="fa fa-check  me-2"></i>Image authenticity</h6>
-                                <h6 class="mb-0"><i class="fa fa-check  me-2"></i>QR code validation</h6>
+                                <h6 class="mb-3"><i class="fa fa-check  me-2"></i>Document Classification</h6>
+                                <h6 class="mb-0"><i class="fa fa-check  me-2"></i>Field Extraction & Validation</h6>
                             </div>
                             <div class="col-sm-6">
-                                <h6 class="mb-3"><i class="fa fa-check  me-2"></i>Hologram verification</h6>
-                                <h6 class="mb-0"><i class="fa fa-check  me-2"></i>Data consistency checks</h6>
+                                <h6 class="mb-3"><i class="fa fa-check  me-2"></i>Overall Match Verification</h6>
+                                <h6 class="mb-0"><i class="fa fa-check  me-2"></i>Fraud Detection & Decision</h6>
                             </div>
                         </div>
                         <div class="d-flex align-items-center mt-4">
@@ -402,23 +404,23 @@
                 <div class="row g-5">
                     <div class="col-md-6 col-lg-4">
                         <h5 class="text-white mb-4">Get In Touch</h5>
-                        <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New Delhi, India</p>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>RBU, Nagpur, India</p>
                         <p><i class="fa fa-phone-alt me-3"></i>+91 98765 43210</p>
-                        <p><i class="fa fa-envelope me-3"></i>info@aadharverify.com</p>
+                        <p><i class="fa fa-envelope me-3"></i>aliyarizvi28@gmail.com</p>
                         <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://github.com/aliyarizvi" target="_blank"><i class="fab fa-github"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://www.linkedin.com/in/aliya-rizvi-110479256/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
                             <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
                             <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4">
                         <h5 class="text-white mb-4">Quick Links</h5>
-                        <a class="btn btn-link" href="index.html">Home</a>
+                        <a class="btn btn-link" href="{{ url_for('index') }}">Home</a>
                         <a class="btn btn-link" href="upload.html">Upload & Verify</a>
                         <a class="btn btn-link" href="analytics.html">Analytics</a>
-                        <a class="btn btn-link" href="">Privacy Policy</a>
-                        <a class="btn btn-link" href="">Terms & Condition</a>
+                        <!-- <a class="btn btn-link" href="">Privacy Policy</a>
+                        <a class="btn btn-link" href="">Terms & Condition</a> -->
                     </div>
                     <div class="col-md-6 col-lg-4">
                         <h5 class="text-white mb-4">Newsletter</h5>
@@ -434,7 +436,7 @@
                 <div class="copyright">
                     <div class="row">
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom">AadharVerify</a>, All Right Reserved. 
+                            &copy; <a class="border-bottom" href="{{ url_for('index') }}">AadharVerify</a>, All Right Reserved. 
                         </div>
                         <div class="col-md-6 text-center text-md-end">
                             <div class="footer-menu">

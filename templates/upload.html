@@ -308,7 +308,7 @@
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-                <a href="index.html" class="navbar-brand p-0">
+                <a href="{{ url_for('index') }}" class="navbar-brand p-0">
                     <h1 class="m-0"><i class="fa fa-shield-alt me-2"></i>Aadhar<span class="fs-5">Verify</span></h1>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -503,14 +503,14 @@
                 <div class="row g-5">
                     <div class="col-md-6 col-lg-4">
                         <h5 class="text-white mb-4">Get In Touch</h5>
-                        <p><i class="fa fa-map-marker-alt me-3"></i>123 Street, New Delhi, India</p>
+                        <p><i class="fa fa-map-marker-alt me-3"></i>RBU, Nagpur, India</p>
                         <p><i class="fa fa-phone-alt me-3"></i>+91 98765 43210</p>
-                        <p><i class="fa fa-envelope me-3"></i>info@aadharverify.com</p>
+                        <p><i class="fa fa-envelope me-3"></i>aliyarizvi28@gmail.com</p>
                         <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://github.com/aliyarizvi" target="_blank"><i class="fab fa-github"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="https://www.linkedin.com/in/aliya-rizvi-110479256/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
                             <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
                             <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-4">
@@ -518,8 +518,8 @@
                         <a class="btn btn-link" href="{{ url_for('index') }}">Home</a>
                         <a class="btn btn-link" href="{{ url_for('upload_page') }}">Upload & Verify</a>
                         <a class="btn btn-link" href="{{ url_for('analytics_page') }}">Analytics</a>
-                        <a class="btn btn-link" href="">Privacy Policy</a>
-                        <a class="btn btn-link" href="">Terms & Condition</a>
+                        <!-- <a class="btn btn-link" href="">Privacy Policy</a>
+                        <a class="btn btn-link" href="">Terms & Condition</a> -->
                     </div>
                     <div class="col-md-6 col-lg-4">
                         <h5 class="text-white mb-4">Newsletter</h5>
@@ -535,11 +535,11 @@
                 <div class="copyright">
                     <div class="row">
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom" href="#">AadharVerify</a>, All Right Reserved. 
+                            &copy; <a class="border-bottom" href="{{ url_for('index') }}">AadharVerify</a>, All Right Reserved. 
                         </div>
                         <div class="col-md-6 text-center text-md-end">
                             <div class="footer-menu">
-                                <a href="">Home</a>
+                                <a href="{{ url_for('index') }}">Home</a>
                                 <a href="">Help</a>
                                 <a href="">FQAs</a>
                             </div>
