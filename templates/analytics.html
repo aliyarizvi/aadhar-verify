@@ -324,7 +324,7 @@
                 </div>
                 
                 <!-- Batch Selection -->
-                <div class="row mb-4">
+                <!-- <div class="row mb-4">
                     <div class="col-lg-6 mx-auto">
                         <div class="form-group">
                             <label for="batchSelect" class="form-label">Select Verification Batch:</label>
@@ -333,7 +333,7 @@
                             </select>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 
                 <!-- No Batch Alert -->
                 <div class="row mb-4" id="noBatchAlert" style="display: none;">
@@ -381,28 +381,12 @@
                         </div>
                     </div>
                     
-                    <!-- Charts Row -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-lg-6">
-                            <div class="chart-card h-100">
-                                <h5 class="mb-4">Verification Status</h5>
-                                <canvas id="statusChart" height="250"></canvas>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="chart-card h-100">
-                                <h5 class="mb-4">Score Distribution</h5>
-                                <canvas id="scoreDistributionChart" height="250"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Detailed Results Table -->
+                    <!-- Detailed Results Table - Moved above the charts -->
                     <div class="row g-4 mb-4">
                         <div class="col-12">
                             <div class="table-card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h5 class="mb-0">Detailed Results</h5>
+                                    <h5 class="mb-0">Aadhar Files</h5>
                                     <button class="btn btn-sm btn-light" id="exportResults">
                                         <i class="fas fa-download me-2"></i>Export
                                     </button>
@@ -431,7 +415,8 @@
                             </div>
                         </div>
                     </div>
-                    
+
+
                     <!-- Non-Aadhar Files Table -->
                     <div class="row g-4">
                         <div class="col-lg-6">
@@ -457,7 +442,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>     
                         
                         <div class="col-lg-6">
                             <div class="chart-card h-100">
@@ -468,7 +453,24 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>                        
+                    
+                    <!-- Charts Row - Now after the detailed results table -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-lg-6">
+                            <div class="chart-card h-100">
+                                <h5 class="mb-4">Verification Status</h5>
+                                <canvas id="statusChart" height="250"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="chart-card h-100">
+                                <h5 class="mb-4">Score Distribution</h5>
+                                <canvas id="scoreDistributionChart" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
         <!-- Analytics Dashboard End -->
 
         <!-- Footer Start -->
