@@ -7,8 +7,8 @@ import re
 import string
 from difflib import SequenceMatcher
 
-classifier = YOLO(r"Classification_model\best.pt") 
-detector = YOLO(r"Detection_model\best.pt")
+classifier = YOLO(r"Classification_model/best.pt") 
+detector = YOLO(r"Detection_model/best.pt")
 reader = easyocr.Reader(['en'])
 
 # Common address terms to ignore
