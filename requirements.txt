@@ -11,3 +11,4 @@ pandas
 python-dotenv
 python-multipart
 pillow
+gunicorn
