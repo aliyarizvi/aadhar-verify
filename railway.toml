@@ -1,0 +1,27 @@
+[start]
+cmd = "gunicorn app:app"
+
+[phases.setup]
+# Install all necessary system dependencies for OpenCV and EasyOCR
+aptPkgs = [
+  "libgl1-mesa-glx",
+  "libglib2.0-0",
+  "libsm6",
+  "libxext6",
+  "libxrender-dev",
+  "libfontconfig1",
+  "libice6",
+  "python3-opencv",
+  "tesseract-ocr",
+  "libtesseract-dev"
+]
+
+[phases.build]
+cmds = [
+  "pip install --upgrade pip",
+  "pip install -r requirements.txt"
+]
+
+[env]
+LD_LIBRARY_PATH = "/usr/lib:/usr/local/lib"
+PORT = "8000"
