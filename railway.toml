@@ -2,9 +2,8 @@
 cmd = "gunicorn app:app"
 
 [phases.setup]
-# Install all necessary system dependencies for OpenCV and EasyOCR
 aptPkgs = [
-  "libgl1-mesa-glx",
+  "libgl1-mesa-glx",  
   "libglib2.0-0",
   "libsm6",
   "libxext6",
