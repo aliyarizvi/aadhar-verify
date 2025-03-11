@@ -2,7 +2,6 @@ import zipfile
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from bson.json_util import dumps
 import os
-import cv2
 import shutil
 from config import users_collection
 from utils import is_aadhar_card
@@ -11,6 +10,7 @@ from utils import calculate_match_score
 import uuid
 import ntpath
 os.system("apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0")
+import cv2
 
 
 app = Flask(__name__)
