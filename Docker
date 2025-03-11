@@ -1,0 +1,31 @@
+# Use a lightweight Python image
+FROM python:3.9-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Install system dependencies required for OpenCV & EasyOCR
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libfontconfig1 \
+    libice6 \
+    && rm -rf /var/lib/apt/lists/*  # Free up space
+
+# Copy only requirements file first (for better Docker caching)
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy the rest of the app into the container
+COPY . .
+
+# Expose the port Gunicorn will use
+EXPOSE 8000
+
+# Run the Flask app using Gunicorn
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
