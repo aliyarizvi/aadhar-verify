@@ -6,10 +6,37 @@ import os
 import re
 import string
 from difflib import SequenceMatcher
+import urllib.request
 
-classifier = YOLO(r"Classification_model/best.pt") 
-detector = YOLO(r"Detection_model/best.pt")
-reader = easyocr.Reader(['en'])
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Define model paths
+CLASSIFICATION_MODEL_PATH = os.path.join(current_dir, "Classification_model", "best.pt")
+DETECTION_MODEL_PATH = os.path.join(current_dir, "Detection_model", "best.pt")
+
+# Initialize models only when needed (lazy loading)
+_classifier = None
+_detector = None
+_reader = None
+
+def get_classifier():
+    global _classifier
+    if _classifier is None:
+        _classifier = YOLO(CLASSIFICATION_MODEL_PATH)
+    return _classifier
+
+def get_detector():
+    global _detector
+    if _detector is None:
+        _detector = YOLO(DETECTION_MODEL_PATH)
+    return _detector
+
+def get_reader():
+    global _reader
+    if _reader is None:
+        _reader = easyocr.Reader(['en'])
+    return _reader
 
 # Common address terms to ignore
 ADDRESS_TERMS_TO_IGNORE = [
@@ -20,6 +47,7 @@ ADDRESS_TERMS_TO_IGNORE = [
 
 def is_aadhar_card(image_path):
     try:
+        classifier = get_classifier()
         results = classifier(image_path)
         for result in results:
             probs = result.probs
@@ -34,6 +62,7 @@ def is_aadhar_card(image_path):
 def detect_fields(image_path):
     if is_aadhar_card(image_path):
         try:
+            detector = get_detector()
             results = detector(image_path)
             return results
         except Exception as e:
@@ -59,6 +88,7 @@ def extract_text(image_path):
         
         for result in results[0].boxes.data.tolist():
             x1, y1, x2, y2, confidence, class_id = map(int, result[:6])
+            detector = get_detector()
             field_class = detector.names[class_id]
 
             cropped_roi = image[y1:y2, x1:x2]
@@ -68,6 +98,7 @@ def extract_text(image_path):
 
             gray_roi = cv2.cvtColor(cropped_roi, cv2.COLOR_BGR2GRAY)
             
+            reader = get_reader()
             text = reader.readtext(gray_roi, detail=0)
             if text:
                 extracted_data[field_class] = ' '.join(text)  
