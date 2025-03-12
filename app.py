@@ -9,14 +9,14 @@ from utils import extract_text
 from utils import calculate_match_score
 import uuid
 import ntpath
-os.system("apt-get update && apt-get install -y libgl1-mesa-glx libglib2.0-0")
-import cv2
 
+# Import CV2 without system call
+import cv2
 
 app = Flask(__name__)
 
 # Set up static folder structure
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = "/tmp/uploads"  # Use /tmp for Vercel serverless functions
 STATIC_FOLDER = "static"
 TEMPLATE_FOLDER = "templates"
 
@@ -271,6 +271,3 @@ def get_all_results():
             user["_id"] = str(user["_id"])
             
     return jsonify(users)
-
-if __name__ == "__main__":
-    app.run(debug=True)
