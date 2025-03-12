@@ -41,3 +41,4 @@ tests/
 # Exclude large model files that will be downloaded at build time
 OCR_model/
 *.pt
+Agile_Document.xlsx
