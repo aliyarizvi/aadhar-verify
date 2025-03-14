@@ -1,44 +1,13 @@
-// Load batch history and latest results when page loads
+// Load latest results when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    loadBatchHistory();
     loadLatestBatchResults();
-});
 
-// Fetch batch history from the server
-function loadBatchHistory() {
-    fetch('/api/batches')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch batch history');
-            }
-            return response.json();
-        })
-        .then(batches => {
-            const batchSelect = document.getElementById('batchSelect');
-            if (batchSelect) {
-                batchSelect.innerHTML = '<option value="">Select a batch</option>';
-                
-                // Add batches in reverse chronological order (newest first)
-                batches.reverse().forEach(batchId => {
-                    const option = document.createElement('option');
-                    option.value = batchId;
-                    option.textContent = `Batch ${batchId.substring(0, 8)}... (${new Date().toLocaleDateString()})`;
-                    batchSelect.appendChild(option);
-                });
-                
-                // Setup event listener for batch selection
-                batchSelect.addEventListener('change', function() {
-                    if (this.value) {
-                        loadBatchResults(this.value);
-                    }
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to load batch history: ' + error.message);
-        });
-}
+    // Set up event listener for export button
+    const exportButton = document.getElementById('exportResults');
+    if (exportButton) {
+        exportButton.addEventListener('click', exportResults);
+    }
+});
 
 // Load the latest batch results
 function loadLatestBatchResults() {
@@ -60,16 +29,7 @@ function loadLatestBatchResults() {
                 document.getElementById('noBatchAlert').style.display = 'none';
                 document.getElementById('resultsContainer').style.display = 'block';
                 
-                // Update the batch select dropdown to select the current batch
-                const batchSelect = document.getElementById('batchSelect');
-                if (batchSelect) {
-                    for (let i = 0; i < batchSelect.options.length; i++) {
-                        if (batchSelect.options[i].value === data.batch_id) {
-                            batchSelect.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
+                // No batch ID display on frontend
                 
                 // Display results
                 displayAnalytics(data);
@@ -79,28 +39,6 @@ function loadLatestBatchResults() {
             console.error('Error:', error);
             document.getElementById('noBatchAlert').style.display = 'block';
             document.getElementById('resultsContainer').style.display = 'none';
-        });
-}
-
-// Load results for a specific batch
-function loadBatchResults(batchId) {
-    fetch(`/api/results/${batchId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch batch results');
-            }
-            return response.json();
-        })
-        .then(data => {
-            document.getElementById('noBatchAlert').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'block';
-            
-            // Display results
-            displayAnalytics(data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to load batch results: ' + error.message);
         });
 }
 
@@ -562,27 +500,12 @@ function showUserDetailsModal(user) {
 }
 
 // Export results function
-document.addEventListener('DOMContentLoaded', function() {
-    const exportButton = document.getElementById('exportResults');
-    if (exportButton) {
-        exportButton.addEventListener('click', exportResults);
-    }
-});
-
 function exportResults() {
-    // Get the current batch ID from the select
-    const batchSelect = document.getElementById('batchSelect');
-    if (!batchSelect || !batchSelect.value) {
-        alert('Please select a batch to export');
-        return;
-    }
-    
-    const batchId = batchSelect.value;
-    
-    fetch(`/api/results/${batchId}`)
+    // Fetch the latest results
+    fetch('/api/results')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to fetch batch results');
+                throw new Error('Failed to fetch latest results');
             }
             return response.json();
         })
@@ -618,7 +541,7 @@ function exportResults() {
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `aadhar_verification_report_${batchId.substring(0, 8)}.csv`);
+            link.setAttribute("download", `aadhar_verification_report_${data.batch_id.substring(0, 8)}.csv`);
             document.body.appendChild(link);
             
             // Trigger download

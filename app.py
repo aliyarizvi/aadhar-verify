@@ -10,7 +10,6 @@ from utils import calculate_match_score
 import uuid
 import ntpath
 
-# Import CV2 without system call
 import cv2
 
 app = Flask(__name__)
@@ -271,3 +270,6 @@ def get_all_results():
             user["_id"] = str(user["_id"])
             
     return jsonify(users)
+ 
+if __name__ == "__main__":
+    app.run(debug=True)
